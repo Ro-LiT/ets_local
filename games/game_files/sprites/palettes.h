@@ -9,6 +9,5 @@ typedef struct {
 } Palette;
 
 extern const Palette PaletteArray[MAX_PALETTES];
-extern const Palette BW;
-extern const Palette Retro_RBY;
+
 
