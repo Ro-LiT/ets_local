@@ -22,8 +22,8 @@ LIB := game_files/display/libraylib_m.a
 UNAME_S := $(shell uname -s)
 
 ifeq ($(UNAME_S),Linux)
-
-    LIBS := $(shell pkg-config --cflags --libs raylib) -lm
+		LIBS = -lraylib -lm -lpthread -ldl -lrt -lX11
+		LIB = game_files/display/libraylib_l.a
 endif
 
 ifeq ($(UNAME_S),Darwin)
