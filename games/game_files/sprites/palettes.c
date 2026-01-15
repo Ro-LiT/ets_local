@@ -25,6 +25,8 @@
 }\
 
 
+
+
 const Palette PaletteArray[MAX_PALETTES] = { BW,RETRO_RBY, OLIVE_GREEN };
 
 	
