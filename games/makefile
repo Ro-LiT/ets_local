@@ -2,6 +2,7 @@
 CC      := gcc
 CFLAGS  := -std=c11 -Wall -Wextra -O2
 
+#new test
 # -------- User-configurable --------
 SRC     ?= game_files/example.c
 OUT     ?= game
