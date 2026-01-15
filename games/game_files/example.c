@@ -1,6 +1,7 @@
 #include "display/display.h"
 #include "sprites/sprites.h"
 #include "sprites/palettes.h"
+#include "example.h"
 #include "stddef.h"
 #include <math.h>
 
@@ -8,52 +9,6 @@ i32 proximity_to_y(f32 proximity, u8 maxY){
   f32 ratio = (f32)maxY/1023.0f;
 	return (i32)round(proximity * ratio);
 };
-
-typedef enum {
-  UP,
-  DOWN,
-} Direction ;
-
-typedef enum {
-  FILLP,
-  OUTLINEP,
-  FILL,
-  OUTLINE,
-} BlockStyle;
-typedef struct {
-  u8 x;
-  u8 y;
-
-  u8 height;
-  u8 width;
-
-  Direction d;
-  u8 animation_n;
-  TextureHandle animation_pack[2][2];
-} Character;
-
-typedef struct {
-  u8 tl_x;
-  u8 tl_y;
-
-  u8 height;
-  u8 width;
-
-  // only for outline
-  u8 thickness;
-
-  BlockStyle style;
-  TWOS_COLOURS color;
-  u8 p_index;
-} Block;
-
-
-void draw_character(Character* c);
-void draw_block(Block b);
-Block new_block(u8 x, u8 y, u8 width, u8 height, TWOS_COLOURS color);
-Block new_block_p(u8 x, u8 y, u8 width, u8 height, TWOS_COLOURS color, u8 p_index);
-Block new_block_outlined(u8 x, u8 y, u8 width, u8 height, TWOS_COLOURS color);
-Block new_block_outlined_p(u8 x, u8 y, u8 width, u8 height, TWOS_COLOURS color, u8 p_index);
 
 int main(){
 	display_init_lcd();
@@ -106,7 +61,7 @@ int main(){
   u8 max_height = 128-wdf1_sprite.height;
 
   // Setting the color map and palette
-  u8 map[3] = {1,2,0};
+  u8 map[3] = {2,1,0};
   set_mapping_array(map);
 	set_palette(RETRO_RBY_INDEX);
 
@@ -114,18 +69,22 @@ int main(){
   set_screen_color(1);
 
   // Setting up static world
-  // note that to make blocks move you would put this inside the loop and clear the world_blocks array
+  // note that to make blocks move you would put this inside the loop and clear the world_blocks array at the start of the loop
 
   world_blocks[world_blocks_len++] = new_block(0,70,30,30,T_THREE);
   world_blocks[world_blocks_len++] = new_block(0,100,24,20,T_THREE);
-  world_blocks[world_blocks_len++] = new_block_outlined_p(0,70,30,30,T_TWO,BW_INDEX);
-  world_blocks[world_blocks_len++] = new_block_p(0,100,24,20,T_TWO,BW_INDEX);
+  world_blocks[world_blocks_len++] = new_block_outlined_p(110,10,30,30,8,T_TWO,BW_INDEX);
+  world_blocks[world_blocks_len++] = new_block_p(125,40,15,30,T_TWO,BW_INDEX);
 
   while(!window_should_close()){
     display_begin();
+
+    // INPUT
 		proximity = get_proximity();
 
     // every 7 frames change the texture
+    // STATE CHANGE
+
     if(counter2 == 7){
       counter = (counter==0 ? 1 : 0);
       counter2 = 0;
@@ -133,7 +92,6 @@ int main(){
 
     if(proximity != proximity_old){
       counter2++;
-
       if(proximity > proximity_old) direction = 0;
       if(proximity < proximity_old) direction = 1;
     } 
@@ -148,7 +106,7 @@ int main(){
     p1.d = direction;
     p1.animation_n = counter%2;
 
-
+    // DRAWING
     clear_screen();
 
     for(int i = 0; i < world_blocks_len; i++){
@@ -193,24 +151,26 @@ Block new_block(u8 x, u8 y, u8 width, u8 height, TWOS_COLOURS color){
   };
 };
 
-Block new_block_outlined_p(u8 x, u8 y, u8 width, u8 height, TWOS_COLOURS color, u8 p_index){
+Block new_block_outlined_p(u8 x, u8 y, u8 width, u8 height,u8 thickness, TWOS_COLOURS color, u8 p_index){
   return (Block){
     .tl_x = x,
     .tl_y = y,
     .width = width,
     .height = height,
+    .thickness = thickness,
     .color = color,
     .p_index = p_index,
     .style = OUTLINEP,
   };
 };
 
-Block new_block_outlined(u8 x, u8 y, u8 width, u8 height, TWOS_COLOURS color){
+Block new_block_outlined(u8 x, u8 y, u8 width, u8 height,u8 thickness, TWOS_COLOURS color){
   return (Block){
     .tl_x = x,
     .tl_y = y,
     .width = width,
     .height = height,
+    .thickness = thickness,
     .color = color,
     .style = OUTLINE,
   };

@@ -22,7 +22,7 @@ LIB := game_files/display/libraylib_m.a
 UNAME_S := $(shell uname -s)
 
 ifeq ($(UNAME_S),Linux)
-		LIBS = -lraylib -lm -lpthread -ldl -lrt -lX11
+		LIBS = -lm -lpthread -ldl -lrt -lX11
 		LIB = game_files/display/libraylib_l.a
 endif
 
@@ -36,11 +36,6 @@ ifeq ($(UNAME_S),Darwin)
 		OUT := $(OUT)_m
 endif
 
-ifeq ($(OS),Windows_NT)
-    OUT := $(OUT).exe
-    LIBS := -lraylib -lopengl32 -lgdi32 -lwinmm
-endif
-
 # Full target path
 TARGET := $(OUTDIR)/$(OUT)
 
@@ -49,7 +44,7 @@ all: $(TARGET)
 
 $(TARGET): $(SRC) $(T_PLATFORM) $(SPRITES) $(PALETTES)
 	mkdir -p $(OUTDIR)
-	$(CC) $(CFLAGS) $(INCLUDES) $(SRC) $(LIB) $(T_PLATFORM) $(SPRITES) $(PALETTES) -o $(TARGET) $(LIBS)
+	$(CC) $(CFLAGS) $(INCLUDES) $(SRC) $(T_PLATFORM) $(SPRITES) $(PALETTES) -o $(TARGET) $(LIB) $(LIBS)
 
 play: $(TARGET)
 	./$(OUTDIR)/$(OUT)
